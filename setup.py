@@ -8,9 +8,12 @@ import os
 subprocess.call("cls" if os.name == "nt" else "clear", shell=True)
 subprocess.check_call(["pip", "install", "virtualenv"])
 subprocess.check_call(["virtualenv", "venv"])
-subprocess.check_call(["venv\\Scripts\\activate.bat"])
+activate_command = (
+    "source venv/bin/activate" if os.name != "nt" else "venv\\Scripts\\activate.bat"
+)
+subprocess.check_call(activate_command, shell=True)
 subprocess.check_call(["pip", "install", "-r", "requirements.txt"])
-subprocess.check_call(["deactivate"])
+# subprocess.check_call(["deactivate"])
 subprocess.call("cls" if os.name == "nt" else "clear", shell=True)
 print(
     "You can now run the runserver.py file. It activate the virtual environment and start the FastApi server..."

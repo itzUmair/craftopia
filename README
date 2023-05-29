@@ -1,7 +1,35 @@
-First run the setup.py file. It will install all the dependancies.
-When prompted run the runserver.py file. It will start the virtual environment and boot up the server.
-You can then start the development.
-When done do the following:
+Open a terminal (make sure it is command prompt not powershell) in the project directory
+Type pip install virtualenv
+once installed, type
 
-- there will be a terminal running the server, click in the terminal and press CTRL+C to close the server. Then
-- open terminal and type deactivate to close the virtual environment.
+virtualenv venv
+
+then:
+
+venv/Scripts/activate.bat
+
+after that,
+
+Type pip install -r requirements.txt
+
+this will install all the dependancies
+
+Once all the dependencies are installed,
+type in the terminal:
+
+uvicorn main:app --reload
+
+this will start the server.
+to close the server, click in the terminal and press CTRL+C, the server will close. If it gets stuck, reopen the terminal
+
+after you are done with your development, type
+
+deactivate
+
+in the terminal to close the virtual environment.
+
+You have to run
+
+venv/Scripts/activate.bat
+
+everytime before you can start the server.
