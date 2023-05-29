@@ -1,0 +1,7 @@
+First run the setup.py file. It will install all the dependancies.
+When prompted run the runserver.py file. It will start the virtual environment and boot up the server.
+You can then start the development.
+When done do the following:
+
+- there will be a terminal running the server, click in the terminal and press CTRL+C to close the server. Then
+- open terminal and type deactivate to close the virtual environment.
