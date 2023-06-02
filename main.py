@@ -37,3 +37,36 @@ async def getallitems():
 @app.get("/getitem/{item_id}")
 async def getitem(item_id):
     return {"data": getItem(item_id)}
+
+
+@app.get("/customer/{customer_id}")
+def getCustomerDetails(customer_id: int):
+    cursor = db.cursor()
+    sql = "SELECT CONCAT(fname,' ',lname) as 'Customer Name', address, email FROM customer WHERE customer_id = %s"
+    values = (customer_id,)
+    cursor.execute(sql, values)
+    customer = cursor.fetchone()
+    if customer:
+        return customer
+    else:
+        return {"message": "customer not found"}
+
+
+@app.get("/products/seller/{seller_id}")
+def getAllProductsOfSeller(seller_id: int):
+    cursor = db.cursor()
+    sql = "SELECT product_name, price_per_unit, stock_in_inventory FROM product WHERE seller_id = %s"
+    values = (seller_id,)
+    cursor.execute(sql, values)
+    products = cursor.fetchall()
+    return products
+
+
+@app.get("/products/category/{category_id}")
+def getAllProductsByCategory(category_id: int):
+    cursor = db.cursor()
+    sql = "SELECT product_name, price_per_unit, stock_in_inventory FROM product WHERE category_id = %s"
+    values = (category_id,)
+    cursor.execute(sql, values)
+    products = cursor.fetchall()
+    return products

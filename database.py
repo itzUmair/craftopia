@@ -43,3 +43,8 @@ def getAllItems():
 def getItem(item_id):
     params = (item_id,)
     return execute(getItemQuery, (params))
+
+
+def getCustomerDetails(customer_id: int):
+    params = (customer_id,)
+    return execute(getCustomerDetailQuery, params)
