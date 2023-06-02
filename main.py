@@ -30,43 +30,25 @@ async def home():
 # URL: localhost:8000/getallitems
 @app.get("/getallitems")
 async def getallitems():
-    return {"data": getAllItems()}
+    return getAllItems()
 
 
 # URL: localhost:8000/getitem/50001 (50001 is an example product id. you can put any id which is available in our database)
 @app.get("/getitem/{item_id}")
 async def getitem(item_id):
-    return {"data": getItem(item_id)}
+    return getItem(item_id)
 
 
 @app.get("/customer/{customer_id}")
-def getCustomerDetails(customer_id: int):
-    cursor = db.cursor()
-    sql = "SELECT CONCAT(fname,' ',lname) as 'Customer Name', address, email FROM customer WHERE customer_id = %s"
-    values = (customer_id,)
-    cursor.execute(sql, values)
-    customer = cursor.fetchone()
-    if customer:
-        return customer
-    else:
-        return {"message": "customer not found"}
+def getcustomerdetails(customer_id: int):
+    return getCustomerDetail(customer_id)
 
 
 @app.get("/products/seller/{seller_id}")
-def getAllProductsOfSeller(seller_id: int):
-    cursor = db.cursor()
-    sql = "SELECT product_name, price_per_unit, stock_in_inventory FROM product WHERE seller_id = %s"
-    values = (seller_id,)
-    cursor.execute(sql, values)
-    products = cursor.fetchall()
-    return products
+def getallproductofseller(seller_id: int):
+    return getAllProductOfSeller(seller_id)
 
 
 @app.get("/products/category/{category_id}")
-def getAllProductsByCategory(category_id: int):
-    cursor = db.cursor()
-    sql = "SELECT product_name, price_per_unit, stock_in_inventory FROM product WHERE category_id = %s"
-    values = (category_id,)
-    cursor.execute(sql, values)
-    products = cursor.fetchall()
-    return products
+def getallproductsbycategory(category_id: int):
+    return getAllProductsByCategory(category_id)

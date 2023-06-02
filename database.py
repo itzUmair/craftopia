@@ -36,15 +36,47 @@ def execute(query, params=None):
 
 # get all the available items in the database
 def getAllItems():
-    return execute(getAllItemQuery)
+    cursor = db.cursor()
+    cursor.execute(getAllItemQuery)
+    return {"data": cursor.fetchall()}
 
 
 # get the specific item that is provided through the url
 def getItem(item_id):
     params = (item_id,)
-    return execute(getItemQuery, (params))
+    cursor = db.cursor()
+    cursor.execute(getItemQuery, params)
+    return {"data": cursor.fetchone()}
 
 
-def getCustomerDetails(customer_id: int):
+def getCustomerDetail(customer_id: int):
+    cursor = db.cursor()
     params = (customer_id,)
-    return execute(getCustomerDetailQuery, params)
+    cursor.execute(getCustomerDetailQuery, params)
+    customer = cursor.fetchone()
+    if customer:
+        return {"data": customer}
+    else:
+        return {"message": "customer not found"}
+
+
+def getAllProductOfSeller(seller_id: int):
+    cursor = db.cursor()
+    params = (seller_id,)
+    cursor.execute(getAllProductOfSellerQuery, params)
+    products = cursor.fetchall()
+    if products:
+        return {"data": products}
+    else:
+        return {"message": "no products"}
+
+
+def getAllProductsByCategory(category_id):
+    cursor = db.cursor()
+    params = (category_id,)
+    cursor.execute(getAllProductsByCategoryQuery, params)
+    products = cursor.fetchall()
+    if products:
+        return {"data": products}
+    else:
+        return {"message": "no products found in this category"}
