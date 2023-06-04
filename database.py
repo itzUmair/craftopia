@@ -192,8 +192,8 @@ def updateProduct(product_id, request):
 
 def customerSignup(request):
     cursor = db.cursor()
-    fname = request["fname"]
-    lname = request["lname"]
+    fname = request["fname"].capitalize()
+    lname = request["lname"].capitalize()
     email = request["email"]
     address = request["address"]
     password = request["password"]
@@ -211,6 +211,41 @@ def customerSignup(request):
         hashedPassword,
     )
     result = cursor.execute(createCustomerAccountQuery, params)
+    db.commit()
+    if cursor.rowcount:
+        return {"message": "account created successfully"}
+    else:
+        return {"message": "something went wrong"}
+
+
+def sellerSignup(request):
+    cursor = db.cursor()
+    fname = request["fname"].capitalize()
+    lname = request["lname"].capitalize()
+    email = request["email"]
+    username = request["username"]
+    password = request["password"]
+    phone = request["phone"]
+    tempParams = (
+        email,
+        phone,
+        username,
+    )
+    cursor.execute(findSellerAccountQuery, tempParams)
+    if len(cursor.fetchall()) >= 1:
+        return {"message": "account with these credentials already exists."}
+    passwordBytes = password.encode("utf-8")
+    hashedPassword = bcrypt.hashpw(passwordBytes, bcrypt.gensalt()).decode("utf-8")
+    params = (
+        fname,
+        lname,
+        username,
+        phone,
+        email,
+        hashedPassword,
+    )
+    print("here")
+    result = cursor.execute(createSellerAccountQuery, params)
     db.commit()
     if cursor.rowcount:
         return {"message": "account created successfully"}

@@ -117,3 +117,12 @@ async def customersignup(request: Request):
         return customerSignup(req)
     except:
         return {"message": "invalid request"}
+
+
+@app.put("/seller/signup")
+async def sellersignup(request: Request):
+    try:
+        req = await request.json()
+        return sellerSignup(req)
+    except:
+        return {"message": "invalid request"}

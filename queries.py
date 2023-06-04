@@ -29,4 +29,10 @@ updateProductQuery = "UPDATE product SET product_name = %s, price_per_unit = %s,
 
 findCustomerAccountQuery = "SELECT customer_id FROM customer WHERE email = %s"
 
+findSellerAccountQuery = (
+    "SELECT seller_id FROM seller WHERE email = %s OR phone = %s OR username = %s"
+)
+
 createCustomerAccountQuery = "INSERT INTO customer (fname, lname, address, email, password) VALUES (%s, %s, %s, %s, %s)"
+
+createSellerAccountQuery = "INSERT INTO seller (fname, lname, username, phone, email, password) VALUES (%s, %s, %s, %s, %s, %s)"
