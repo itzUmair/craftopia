@@ -1,7 +1,5 @@
 # This file handles all the tasks related to the mySQL database
 # This file creates connection with the database and runs all the queries
-
-
 import mysql.connector
 from queries import *
 
@@ -29,7 +27,7 @@ print("connected to Craftopia database")
 
 # this is a helper function to reduce redundant code. this creates a cursor in our database from where the queries are to be ran
 def execute(query, params=None):
-    cursor = db.cursor()
+    cursor = db.cursor(buffered=True)
     cursor.execute(query, params)
     return cursor.fetchall()
 
@@ -43,13 +41,15 @@ def getAllItems():
 
 # get the specific item that is provided through the url
 def getItem(item_id):
-    params = (item_id,)
+    db.reconnect()
     cursor = db.cursor()
+    params = (item_id,)
     cursor.execute(getItemQuery, params)
     return {"data": cursor.fetchone()}
 
 
 def getCustomerDetail(customer_id: int):
+    db.reconnect()
     cursor = db.cursor()
     params = (customer_id,)
     cursor.execute(getCustomerDetailQuery, params)
@@ -61,6 +61,7 @@ def getCustomerDetail(customer_id: int):
 
 
 def getAllProductOfSeller(seller_id: int):
+    db.reconnect()
     cursor = db.cursor()
     params = (seller_id,)
     cursor.execute(getAllProductOfSellerQuery, params)
@@ -72,6 +73,7 @@ def getAllProductOfSeller(seller_id: int):
 
 
 def getAllProductsByCategory(category_id):
+    db.reconnect()
     cursor = db.cursor()
     params = (category_id,)
     cursor.execute(getAllProductsByCategoryQuery, params)
@@ -80,3 +82,108 @@ def getAllProductsByCategory(category_id):
         return {"data": products}
     else:
         return {"message": "no products found in this category"}
+
+
+def getSearchedProduct(product_name):
+    db.reconnect()
+    cursor = db.cursor()
+    params = (f"%{product_name}%",)
+    cursor.execute(getSearchedProductQuery, params)
+    products = cursor.fetchall()
+    if products:
+        return {"data": products}
+    else:
+        return {"message": "no products found by this name"}
+
+
+def sellerUpdateProfile(seller_id: int, request):
+    cursor = db.cursor()
+    fname = request["fname"].capitalize()
+    lname = request["lname"].capitalize()
+    username = request["username"]
+    phone = request["phone"]
+    email = request["email"]
+    password = request["password"]
+    params = (fname, lname, username, phone, email, password, seller_id)
+    cursor.execute(sellerUpdateProfileQuery, params)
+    db.commit()
+    if cursor.rowcount:
+        return {"message": "Seller information updated successfully"}
+    else:
+        return {"message": "already up-to-date"}
+
+
+def customerUpdateProfile(customer_id: int, request):
+    cursor = db.cursor()
+    fname = request["fname"].capitalize()
+    lname = request["lname"].capitalize()
+    address = request["address"]
+    email = request["email"]
+    password = request["password"]
+    params = (fname, lname, address, email, password, customer_id)
+    cursor.execute(customerUpdateProfileQuery, params)
+    db.commit()
+    if cursor.rowcount:
+        return {"message": "Customer information updated successfully"}
+    else:
+        return {"message": "already up-to-date"}
+
+
+def setShippedOrder(order_id: int):
+    cursor = db.cursor()
+    params = (order_id,)
+    cursor.execute(setShippedOrderQuery, params)
+    db.commit()
+    if cursor.rowcount:
+        return {"message": "Order Shipped"}
+    else:
+        return {"message": "already up-to-date"}
+
+
+def setCompletedOrder(order_id: int):
+    cursor = db.cursor()
+    params = (order_id,)
+    cursor.execute(setCompletedOrderQuery, params)
+    db.commit()
+    if cursor.rowcount:
+        return {"message": "Order Completed"}
+    else:
+        return {"message": "already up-to-date"}
+
+
+def addProduct(seller_id, request):
+    cursor = db.cursor()
+    product_name = request["product_name"].title()
+    price_per_unit = request["price_per_unit"]
+    stock_in_inventory = request["stock_in_inventory"].capitalize()
+    category_id = request["category_id"]
+    params = (product_name, price_per_unit, stock_in_inventory, category_id, seller_id)
+    cursor.execute(addProductQuery, params)
+    db.commit()
+    return {"message": "Added product successfully"}
+
+
+def removeProduct(product_id):
+    cursor = db.cursor()
+    params = (product_id,)
+    cursor.execute(deleteProductQuery, params)
+    db.commit()
+    if cursor.rowcount:
+        return {"message": "Product removed successfully"}
+    else:
+        return {"message": "no product found"}
+
+
+def updateProduct(product_id, request):
+    cursor = db.cursor()
+    product_name = request["product_name"].title()
+    price_per_unit = request["price_per_unit"]
+    stock_in_inventory = request["stock_in_inventory"].capitalize()
+    category_id = request["category_id"]
+    params = (product_name, price_per_unit, stock_in_inventory, category_id, product_id)
+    cursor.execute(updateProductQuery, params)
+    db.commit()
+    if cursor.rowcount:
+        return {"message": "Product updated successfully"}
+    else:
+        return {"message": "already up-to-date"}
