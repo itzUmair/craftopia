@@ -141,6 +141,7 @@ async def customerlogin(request: Request):
 async def customerlogin(request: Request):
     try:
         req = await request.json()
-        return sellerLogin(req)
+        reqHeaders = dict(request.headers)
+        return sellerLogin(req, reqHeaders)
     except:
         return {"message": "invalid request"}

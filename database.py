@@ -35,32 +35,48 @@ print("connected to Craftopia database")
 # ==================================== QUERIES ==================================================
 
 
-# this is a helper function to reduce redundant code. this creates a cursor in our database from where the queries are to be ran
-def execute(query, params=None):
-    cursor = db.cursor(buffered=True)
-    cursor.execute(query, params)
-    return cursor.fetchall()
+def verifyToken(headers):
+    try:
+        authorization_header = headers.get("authorization")
+        if authorization_header is None:
+            return {"success": True, "message": "token missing"}
+        token = authorization_header.split(" ")[1]
+        decoded_token = jwt.decode(token, jwtsecret, algorithms=["HS256"])
+        return decoded_token
+    except jwt.ExpiredSignatureError:
+        return {"success": False, "message": "token expired"}
+    except (jwt.DecodeError, IndexError):
+        return {"success": False, "message": "invalid token"}
 
 
 # get all the available items in the database
-def getAllItems():
+def getAllItems(requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     cursor.execute(getAllItemQuery)
     return {"data": cursor.fetchall()}
 
 
 # get the specific item that is provided through the url
-def getItem(item_id):
+def getItem(item_id, requestHeaders):
     db.reconnect()
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     params = (item_id,)
     cursor.execute(getItemQuery, params)
     return {"data": cursor.fetchone()}
 
 
-def getCustomerDetail(customer_id: int):
+def getCustomerDetail(customer_id: int, requestHeaders):
     db.reconnect()
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     params = (customer_id,)
     cursor.execute(getCustomerDetailQuery, params)
     customer = cursor.fetchone()
@@ -70,9 +86,12 @@ def getCustomerDetail(customer_id: int):
         return {"message": "customer not found"}
 
 
-def getAllProductOfSeller(seller_id: int):
+def getAllProductOfSeller(seller_id: int, requestHeaders):
     db.reconnect()
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     params = (seller_id,)
     cursor.execute(getAllProductOfSellerQuery, params)
     products = cursor.fetchall()
@@ -82,9 +101,12 @@ def getAllProductOfSeller(seller_id: int):
         return {"message": "no products"}
 
 
-def getAllProductsByCategory(category_id):
+def getAllProductsByCategory(category_id, reqHeaders):
     db.reconnect()
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     params = (category_id,)
     cursor.execute(getAllProductsByCategoryQuery, params)
     products = cursor.fetchall()
@@ -94,9 +116,12 @@ def getAllProductsByCategory(category_id):
         return {"message": "no products found in this category"}
 
 
-def getSearchedProduct(product_name):
+def getSearchedProduct(product_name, requestHeaders):
     db.reconnect()
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     params = (f"%{product_name}%",)
     cursor.execute(getSearchedProductQuery, params)
     products = cursor.fetchall()
@@ -106,8 +131,11 @@ def getSearchedProduct(product_name):
         return {"message": "no products found by this name"}
 
 
-def sellerUpdateProfile(seller_id: int, request):
+def sellerUpdateProfile(seller_id: int, request, requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     fname = request["fname"].capitalize()
     lname = request["lname"].capitalize()
     username = request["username"]
@@ -123,8 +151,11 @@ def sellerUpdateProfile(seller_id: int, request):
         return {"message": "already up-to-date"}
 
 
-def customerUpdateProfile(customer_id: int, request):
+def customerUpdateProfile(customer_id: int, request, requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     fname = request["fname"].capitalize()
     lname = request["lname"].capitalize()
     address = request["address"]
@@ -139,8 +170,11 @@ def customerUpdateProfile(customer_id: int, request):
         return {"message": "already up-to-date"}
 
 
-def setShippedOrder(order_id: int):
+def setShippedOrder(order_id: int, requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     params = (order_id,)
     cursor.execute(setShippedOrderQuery, params)
     db.commit()
@@ -150,8 +184,11 @@ def setShippedOrder(order_id: int):
         return {"message": "already up-to-date"}
 
 
-def setCompletedOrder(order_id: int):
+def setCompletedOrder(order_id: int, requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     params = (order_id,)
     cursor.execute(setCompletedOrderQuery, params)
     db.commit()
@@ -161,8 +198,11 @@ def setCompletedOrder(order_id: int):
         return {"message": "already up-to-date"}
 
 
-def addProduct(seller_id, request):
+def addProduct(seller_id, request, reqHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     product_name = request["product_name"].title()
     price_per_unit = request["price_per_unit"]
     stock_in_inventory = request["stock_in_inventory"].capitalize()
@@ -173,8 +213,11 @@ def addProduct(seller_id, request):
     return {"message": "Added product successfully"}
 
 
-def removeProduct(product_id):
+def removeProduct(product_id, requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     params = (product_id,)
     cursor.execute(deleteProductQuery, params)
     db.commit()
@@ -184,8 +227,11 @@ def removeProduct(product_id):
         return {"message": "no product found"}
 
 
-def updateProduct(product_id, request):
+def updateProduct(product_id, request, requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     product_name = request["product_name"].title()
     price_per_unit = request["price_per_unit"]
     stock_in_inventory = request["stock_in_inventory"].capitalize()
@@ -199,8 +245,11 @@ def updateProduct(product_id, request):
         return {"message": "already up-to-date"}
 
 
-def customerSignup(request):
+def customerSignup(request, requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     fname = request["fname"].capitalize()
     lname = request["lname"].capitalize()
     email = request["email"]
@@ -227,8 +276,11 @@ def customerSignup(request):
         return {"message": "something went wrong"}
 
 
-def sellerSignup(request):
+def sellerSignup(request, requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     fname = request["fname"].capitalize()
     lname = request["lname"].capitalize()
     email = request["email"]
@@ -262,8 +314,11 @@ def sellerSignup(request):
         return {"message": "something went wrong"}
 
 
-def customerLogin(request):
+def customerLogin(request, requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     email = request["email"]
     password = request["password"]
     params = (email,)
@@ -293,8 +348,11 @@ def customerLogin(request):
     return {"message": "success", "token": jwtToken, "data": customerData}
 
 
-def sellerLogin(request):
+def sellerLogin(request, requestHeaders):
     cursor = db.cursor()
+    validation = verifyToken(requestHeaders)
+    if validation.get("success") == False:
+        return validation
     email = request["email"]
     password = request["password"]
     params = (email,)
