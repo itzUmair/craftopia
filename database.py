@@ -291,3 +291,34 @@ def customerLogin(request):
 
     jwtToken = jwt.encode(data, jwtsecret, algorithm="HS256")
     return {"message": "success", "token": jwtToken, "data": customerData}
+
+
+def sellerLogin(request):
+    cursor = db.cursor()
+    email = request["email"]
+    password = request["password"]
+    params = (email,)
+    cursor.execute(loginSellerQuery, params)
+    result = cursor.fetchall()
+    if len(result) == 0:
+        return {"message": "no account found"}
+    passwordBytes = password.encode("utf-8")
+    verifyPassword = bcrypt.checkpw(passwordBytes, result[0][-1].encode("utf-8"))
+    if not verifyPassword:
+        return {"message": "invalid password"}
+
+    customerData = {
+        "s_name": result[0][1] + result[0][2],
+        "s_address": result[0][3],
+        "s_email": result[0][4],
+        "s_authority": "seller",
+    }
+
+    data = {
+        "s_id": result[0][0],
+        "iat": datetime.datetime.utcnow(),
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),
+    }
+
+    jwtToken = jwt.encode(data, jwtsecret, algorithm="HS256")
+    return {"message": "success", "token": jwtToken, "data": customerData}
