@@ -36,3 +36,5 @@ findSellerAccountQuery = (
 createCustomerAccountQuery = "INSERT INTO customer (fname, lname, address, email, password) VALUES (%s, %s, %s, %s, %s)"
 
 createSellerAccountQuery = "INSERT INTO seller (fname, lname, username, phone, email, password) VALUES (%s, %s, %s, %s, %s, %s)"
+
+loginCustomerQuery = "SELECT * FROM customer WHERE email = %s"

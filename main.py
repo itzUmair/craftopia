@@ -126,3 +126,12 @@ async def sellersignup(request: Request):
         return sellerSignup(req)
     except:
         return {"message": "invalid request"}
+
+
+@app.post("/customer/login")
+async def customerlogin(request: Request):
+    try:
+        req = await request.json()
+        return customerLogin(req)
+    except:
+        return {"message": "invalid request"}

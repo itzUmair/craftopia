@@ -3,6 +3,15 @@
 import mysql.connector
 from queries import *
 import bcrypt
+from dotenv import load_dotenv
+import os
+import datetime
+import jwt
+
+
+load_dotenv()
+
+jwtsecret = os.getenv("JWT_SECRET")
 
 
 # create connection with the database
@@ -251,3 +260,34 @@ def sellerSignup(request):
         return {"message": "account created successfully"}
     else:
         return {"message": "something went wrong"}
+
+
+def customerLogin(request):
+    cursor = db.cursor()
+    email = request["email"]
+    password = request["password"]
+    params = (email,)
+    cursor.execute(loginCustomerQuery, params)
+    result = cursor.fetchall()
+    if len(result) == 0:
+        return {"message": "no account found"}
+    passwordBytes = password.encode("utf-8")
+    verifyPassword = bcrypt.checkpw(passwordBytes, result[0][-1].encode("utf-8"))
+    if not verifyPassword:
+        return {"message": "invalid password"}
+
+    customerData = {
+        "c_name": result[0][1] + result[0][2],
+        "c_address": result[0][3],
+        "c_email": result[0][4],
+        "c_authority": "customer",
+    }
+
+    data = {
+        "c_id": result[0][0],
+        "iat": datetime.datetime.utcnow(),
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),
+    }
+
+    jwtToken = jwt.encode(data, jwtsecret, algorithm="HS256")
+    return {"message": "success", "token": jwtToken, "data": customerData}
