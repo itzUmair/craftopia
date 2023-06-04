@@ -108,3 +108,12 @@ async def updateproduct(product_id: int, request: Request):
         return updateProduct(product_id, req)
     except:
         return {"message": "invalid request"}
+
+
+@app.put("/customer/signup")
+async def customersignup(request: Request):
+    try:
+        req = await request.json()
+        return customerSignup(req)
+    except:
+        return {"message": "invalid request"}

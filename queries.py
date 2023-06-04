@@ -26,3 +26,7 @@ addProductQuery = "INSERT INTO product (product_name, price_per_unit, stock_in_i
 deleteProductQuery = "DELETE FROM product WHERE product_id = %s"
 
 updateProductQuery = "UPDATE product SET product_name = %s, price_per_unit = %s, stock_in_inventory = %s, category_id = %s WHERE product_id = %s"
+
+findCustomerAccountQuery = "SELECT customer_id FROM customer WHERE email = %s"
+
+createCustomerAccountQuery = "INSERT INTO customer (fname, lname, address, email, password) VALUES (%s, %s, %s, %s, %s)"

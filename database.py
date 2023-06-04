@@ -2,6 +2,7 @@
 # This file creates connection with the database and runs all the queries
 import mysql.connector
 from queries import *
+import bcrypt
 
 
 # create connection with the database
@@ -187,3 +188,31 @@ def updateProduct(product_id, request):
         return {"message": "Product updated successfully"}
     else:
         return {"message": "already up-to-date"}
+
+
+def customerSignup(request):
+    cursor = db.cursor()
+    fname = request["fname"]
+    lname = request["lname"]
+    email = request["email"]
+    address = request["address"]
+    password = request["password"]
+    tempParams = (email,)
+    cursor.execute(findCustomerAccountQuery, tempParams)
+    if len(cursor.fetchall()) >= 1:
+        return {"message": "account with this email already exists."}
+    passwordBytes = password.encode("utf-8")
+    hashedPassword = bcrypt.hashpw(passwordBytes, bcrypt.gensalt()).decode("utf-8")
+    params = (
+        fname,
+        lname,
+        address,
+        email,
+        hashedPassword,
+    )
+    result = cursor.execute(createCustomerAccountQuery, params)
+    db.commit()
+    if cursor.rowcount:
+        return {"message": "account created successfully"}
+    else:
+        return {"message": "something went wrong"}
