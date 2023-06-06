@@ -46,3 +46,5 @@ getAllProductsCoverImageQuery = "SELECT product.product_id, ( SELECT image_url F
 getSearchedProductsCoverImageQuery = "SELECT product.product_id, ( SELECT image_url FROM images WHERE images.product_id = product.product_id LIMIT 1 ) AS image_url FROM product WHERE product.product_name LIKE %s ORDER BY product.product_id ASC"
 
 getCategoryProductsCoverImageQuery = "SELECT product.product_id, ( SELECT image_url FROM images WHERE images.product_id = product.product_id LIMIT 1 ) AS image_url FROM product WHERE product.category_id = %s ORDER BY product.product_id ASC"
+
+getProductDetailsImagesQuery = "SELECT * FROM images WHERE images.product_id = %s"

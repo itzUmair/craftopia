@@ -160,3 +160,8 @@ async def getsearchedproductscoverimage(product_name: str):
 @app.get("/product/category/coverimages/{category_id}")
 async def getsearchedproductscoverimage(category_id: int):
     return getCategoryProductsCoverImage(category_id)
+
+
+@app.get("/product/getitem/images/{item_id}")
+async def getproductdetailsimages(item_id: int):
+    return getProductDetailsImages(item_id)

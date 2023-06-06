@@ -397,5 +397,16 @@ def getCategoryProductsCoverImage(category_id):
         return {"message": "no images"}
 
 
+def getProductDetailsImages(item_id):
+    db.reconnect()
+    cursor = db.cursor()
+    params = (item_id,)
+    cursor.execute(getProductDetailsImagesQuery, params)
+    images= cursor.fetchall()
+    if images:
+      return {"data": images}
+    else:
+      return {"message": "no images"}
+
 def placeOrder():
     pass
