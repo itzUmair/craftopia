@@ -360,3 +360,42 @@ def sellerLogin(request):
 
     jwtToken = jwt.encode(data, jwtsecret, algorithm="HS256")
     return {"message": "success", "token": jwtToken, "data": customerData}
+
+
+def getAllProductsCoverImage():
+    db.reconnect()
+    cursor = db.cursor()
+    cursor.execute(getAllProductsCoverImageQuery)
+    images = cursor.fetchall()
+    if images:
+        return {"data": images}
+    else:
+        return {"message": "no images"}
+
+
+def getSearchedProductsCoverImage(product_name):
+    db.reconnect()
+    cursor = db.cursor()
+    params = (f"%{product_name}%",)
+    cursor.execute(getSearchedProductsCoverImageQuery, params)
+    images = cursor.fetchall()
+    if images:
+        return {"data": images}
+    else:
+        return {"message": "no images"}
+
+
+def getCategoryProductsCoverImage(category_id):
+    db.reconnect()
+    cursor = db.cursor()
+    params = (category_id,)
+    cursor.execute(getCategoryProductsCoverImageQuery, params)
+    images = cursor.fetchall()
+    if images:
+        return {"data": images}
+    else:
+        return {"message": "no images"}
+
+
+def placeOrder():
+    pass

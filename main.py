@@ -145,3 +145,18 @@ async def customerlogin(request: Request):
         return sellerLogin(req, reqHeaders)
     except:
         return {"message": "invalid request"}
+
+
+@app.get("/product/coverimages")
+async def getallproductscoverimage():
+    return getAllProductsCoverImage()
+
+
+@app.get("/product/search/coverimages/{product_name}")
+async def getsearchedproductscoverimage(product_name: str):
+    return getSearchedProductsCoverImage(product_name)
+
+
+@app.get("/product/category/coverimages/{category_id}")
+async def getsearchedproductscoverimage(category_id: int):
+    return getCategoryProductsCoverImage(category_id)

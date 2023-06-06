@@ -39,5 +39,10 @@ createSellerAccountQuery = "INSERT INTO seller (fname, lname, username, phone, e
 
 loginCustomerQuery = "SELECT * FROM customer WHERE email = %s"
 
-
 loginSellerQuery = "SELECT * FROM seller WHERE email = %s"
+
+getAllProductsCoverImageQuery = "SELECT product.product_id, ( SELECT image_url FROM images WHERE images.product_id = product.product_id LIMIT 1 ) AS image_url FROM product ORDER BY product.product_id ASC"
+
+getSearchedProductsCoverImageQuery = "SELECT product.product_id, ( SELECT image_url FROM images WHERE images.product_id = product.product_id LIMIT 1 ) AS image_url FROM product WHERE product.product_name LIKE %s ORDER BY product.product_id ASC"
+
+getCategoryProductsCoverImageQuery = "SELECT product.product_id, ( SELECT image_url FROM images WHERE images.product_id = product.product_id LIMIT 1 ) AS image_url FROM product WHERE product.category_id = %s ORDER BY product.product_id ASC"
