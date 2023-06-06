@@ -48,3 +48,7 @@ getSearchedProductsCoverImageQuery = "SELECT product.product_id, ( SELECT image_
 getCategoryProductsCoverImageQuery = "SELECT product.product_id, ( SELECT image_url FROM images WHERE images.product_id = product.product_id LIMIT 1 ) AS image_url FROM product WHERE product.category_id = %s ORDER BY product.product_id ASC"
 
 getProductDetailsImagesQuery = "SELECT * FROM images WHERE images.product_id = %s"
+
+getSimilarProductsQuery = "SELECT product.*, AVG(reviews.rating), category.category_name, COUNT(reviews.review_id) FROM product LEFT JOIN reviews ON product.product_id = reviews.product_id LEFT JOIN category ON product.category_id = category.category_id GROUP BY product.product_id HAVING category_id = %s AND product.product_id <> %s"
+
+getSimilarProductsCoverImagesQuery = "SELECT product.product_id, ( SELECT image_url FROM images WHERE images.product_id = product.product_id LIMIT 1 ) AS image_url FROM product WHERE product.category_id = %s AND product.product_id <> %s ORDER BY product.product_id ASC"

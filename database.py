@@ -402,11 +402,42 @@ def getProductDetailsImages(item_id):
     cursor = db.cursor()
     params = (item_id,)
     cursor.execute(getProductDetailsImagesQuery, params)
-    images= cursor.fetchall()
+    images = cursor.fetchall()
     if images:
-      return {"data": images}
+        return {"data": images}
     else:
-      return {"message": "no images"}
+        return {"message": "no images"}
+
+
+def getSimilarProducts(category_id, currentProductId):
+    db.reconnect()
+    cursor = db.cursor()
+    params = (
+        category_id,
+        currentProductId,
+    )
+    cursor.execute(getSimilarProductsQuery, params)
+    products = cursor.fetchall()
+    if products:
+        return {"data": products}
+    else:
+        return {"message": "no products"}
+
+
+def getSimilarProductsCoverImages(category_id, currentProductId):
+    db.reconnect()
+    cursor = db.cursor()
+    params = (
+        category_id,
+        currentProductId,
+    )
+    cursor.execute(getSimilarProductsCoverImagesQuery, params)
+    products = cursor.fetchall()
+    if products:
+        return {"data": products}
+    else:
+        return {"message": "no products"}
+
 
 def placeOrder():
     pass

@@ -165,3 +165,13 @@ async def getsearchedproductscoverimage(category_id: int):
 @app.get("/product/getitem/images/{item_id}")
 async def getproductdetailsimages(item_id: int):
     return getProductDetailsImages(item_id)
+
+
+@app.get("/product/similar/{category_id}/{product_id}")
+async def getsimilarproducts(category_id: int, product_id: int):
+    return getSimilarProducts(category_id, product_id)
+
+
+@app.get("/product/similar/coverimages/{category_id}/{product_id}")
+async def getsimilarproductscoverimages(category_id: int, product_id: int):
+    return getSimilarProductsCoverImages(category_id, product_id)
